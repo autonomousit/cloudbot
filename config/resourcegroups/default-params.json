@@ -1,0 +1,108 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "defaultPrefix": {
+        "value": "mybot"
+    }, 
+    "storageAccountName": {
+      "value": "storage"
+    },
+    "adminUsername": {
+      "value": "DefaultAdmin"
+    },
+    "adminPassword": {
+      "value": "Pa$$w0rd"
+    },
+    "dnsNameforAppIP": {
+      "value": "appip"
+    },
+    "azureLBName": {
+      "value": "AzureLB"
+    },
+    "dnsNameforAzureLBIP": {
+      "value": "azurelb"
+    },
+    "publicIPAddressName": {
+      "value": "PublicIP"
+    },
+    "nsgName": {
+      "value": "SecurityGroup"
+    },
+    "vnetName": {
+      "value": "VNet"
+    },
+    "vnetAddressPrefix": {
+      "value": "10.0.0.0/16"
+    },
+    "externalSubnetName": {
+      "value": "ExternalNet"
+    },
+    "externalSubnetPrefix": {
+      "value": "10.0.0.0/24"
+    },
+    "internalSubnetName": {
+      "value": "InternalSubnet"
+    },
+    "internalSubnetPrefix": {
+      "value": "10.0.1.0/24"
+    },
+    "nicNamePrefix": {
+      "value": "Nic"
+    },
+    "defaultVmSize": {
+      "value": "Standard_DS1_v2"
+    },
+    "linuxServerPrefix": {
+      "value": "NxServer"
+    },
+    "linuxAvailabilitySetName": {
+      "value": "NxAvailabilitySet"
+    },
+    "linuxImagePublisher": {
+      "value": "Canonical"
+    },
+    "linuxImageOffer": {
+      "value": "UbuntuServer"
+    },
+    "linuxImageSKU": {
+      "value": "14.04.5-LTS"
+    },
+    "linuxInstances": {
+      "value": 1
+    },
+    "windowsServerPrefix": {
+      "value": "MsServer"
+    },
+    "windowsAvailabilitySetName": {
+      "value": "MsAvailabilitySet"
+    },
+    "windowsImagePublisher": {
+      "value": "MicrosoftWindowsServer"
+    },
+    "windowsImageOffer": {
+      "value": "WindowsServer"
+    },
+    "windowsImageSKU": {
+      "value": "2012-R2-Datacenter"
+    },
+    "windowsInstances": {
+      "value": 1
+    },
+    "kempPrefix": {
+      "value": "Lm"
+    },
+    "kempAvailabilitySetName": {
+      "value": "LmAvailabilitySet"
+    },
+    "kempImagePublisher": {
+      "value": "kemptech"
+    },
+    "kempImageOffer": {
+      "value": "vlm-azure"
+    },
+    "kempImageSKU": {
+      "value": "basic-byol"
+    }
+  }
+}

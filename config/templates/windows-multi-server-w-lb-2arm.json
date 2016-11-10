@@ -1,0 +1,685 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "defaultPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Default Naming Prefix"
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of storage account"
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Admin username"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin password"
+      }
+    },  
+    "dnsNameforAppIP": {
+      "type": "string",
+      "metadata": {
+        "description": "DNS for App Server IP"
+      }
+    },
+    "azureLBName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for Azure Load Balancer IP"
+      }
+    },
+    "dnsNameforAzureLBIP": {
+      "type": "string",
+      "metadata": {
+        "description": "DNS name Azure Load Balancer IP"
+      }
+    },
+    "publicIPAddressName": {
+      "type": "string",
+      "metadata": {
+        "description": "Public IP Name"
+      }
+    },
+    "nsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "Network Security Group Name"
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET name"
+      }
+    },
+    "vnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET address prefix name"
+      }
+    },
+    "externalSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET external subnet name"
+      }
+    },
+    "externalSubnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET external subnet prefix"
+      }
+    },
+    "internalSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET internal subnet name"
+      }
+    },
+    "internalSubnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET internal subnet prefix"
+      }
+    },
+    "nicNamePrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Network Interface name prefix"
+      }
+    },
+    "defaultVmSize": {
+      "type": "string",
+      "metadata": {
+        "description": "Default size of the VMs"
+      }
+    },
+    "linuxServerPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix to use for Linux Server VM names"
+      }
+    },
+    "linuxAvailabilitySetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Linux Server VM Availability Set"
+      }
+    },
+    "linuxImagePublisher": {
+      "type": "string",
+      "metadata": {
+        "description": "Linux Image Publisher"
+      }
+    },
+    "linuxImageOffer": {
+      "type": "string",
+      "metadata": {
+        "description": "Linux Image Offer"
+      }
+    },
+    "linuxImageSKU": {
+      "type": "string",
+      "metadata": {
+        "description": "Linux Image SKU"
+      }
+    },
+    "linuxInstances": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of Linux Server Instances"
+      }
+    },
+    "windowsServerPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix to use for Windows Server VM names"
+      }
+    },
+    "windowsAvailabilitySetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Windows Server VM Availability Set"
+      }
+    },
+    "windowsImagePublisher": {
+      "type": "string",
+      "metadata": {
+        "description": "Windows Image Publisher"
+      }
+    },
+    "windowsImageOffer": {
+      "type": "string",
+      "metadata": {
+        "description": "Windows Image Offer"
+      }
+    },
+    "windowsImageSKU": {
+      "type": "string",
+      "metadata": {
+        "description": "Windows Image SKU"
+      }
+    },
+    "windowsInstances": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of Windows Server Instances"
+      }
+    },
+    "kempPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix to use for KEMP Server VM names"
+      }
+    },
+    "kempAvailabilitySetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the KEMP Server VM Availability Set"
+      }
+    },
+    "kempImagePublisher": {
+      "type": "string",
+      "metadata": {
+        "description": "KEMP Image Publisher"
+      }
+    },
+    "kempImageOffer": {
+      "type": "string",
+      "metadata": {
+        "description": "KEMP Image Offer"
+      }
+    },
+    "kempImageSKU": {
+      "type": "string",
+      "metadata": {
+        "description": "KEMP Image SKU"
+      }
+    }
+  },
+  "variables": {
+    "storageAccountType": "Standard_LRS",
+    "windowsAvailabilitySetName": "[concat(parameters('defaultPrefix'), parameters('windowsAvailabilitySetName'))]",
+    "kempAvailabilitySetName": "[concat(parameters('defaultPrefix'), parameters('kempAvailabilitySetName'))]",
+    "addressPrefix": "[parameters('vnetAddressPrefix')]",
+    "externalSubnetName": "[concat(parameters('defaultPrefix'), parameters('externalSubnetName'))]",
+    "externalSubnetPrefix": "[parameters('externalSubnetPrefix')]",
+    "internalSubnetName": "[concat(parameters('defaultPrefix'), parameters('internalSubnetName'))]",
+    "internalSubnetPrefix": "[parameters('internalSubnetPrefix')]",
+    "publicIPAddressType": "Dynamic",
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', concat(parameters('defaultPrefix'), parameters('vnetName')))]",
+    "externalSubnetRef": "[concat(variables('vnetID'),'/subnets/', variables('externalSubnetName'))]",
+    "internalSubnetRef": "[concat(variables('vnetID'),'/subnets/', variables('internalSubnetName'))]",
+    "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('defaultPrefix'), parameters('publicIPAddressName')))]",
+    "windowsInstances": "[parameters('windowsInstances')]",
+    "lbID": "[resourceId('Microsoft.Network/loadBalancers', concat(parameters('defaultPrefix'), parameters('azureLBName')))]",
+    "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
+    "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/LoadmasterPool')]",
+    "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[concat(parameters('defaultPrefix'), parameters('storageAccountName'))]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "accountType": "[variables('storageAccountType')]"
+      }
+    },
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('windowsAvailabilitySetName')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[resourceGroup().location]",
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('kempAvailabilitySetName')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[resourceGroup().location]",
+      "properties": {}
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat(parameters('defaultPrefix'), parameters('publicIPAddressName'))]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
+        "dnsSettings": {
+          "domainNameLabel": "[concat(parameters('defaultPrefix'), parameters('dnsNameforAzureLBIP'))]"
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[concat(parameters('defaultPrefix'), parameters('vnetName'))]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('addressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('externalSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('externalSubnetPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('internalSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('internalSubnetPrefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(parameters('defaultPrefix'), parameters('nicNamePrefix'), 'ms', copyindex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nicLoop",
+        "count": "[variables('windowsInstances')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', parameters('defaultPrefix'), parameters('vnetName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfigVM",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('internalSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(parameters('defaultPrefix'), parameters('nicNamePrefix'), 'lmInternal', copyindex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nicLoop",
+        "count": 2
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', parameters('defaultPrefix'), parameters('vnetName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfigVM",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('internalSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(parameters('defaultPrefix'), parameters('nicNamePrefix'), 'lmExternal', copyindex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nicLoop",
+        "count": 2
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', parameters('defaultPrefix'), parameters('vnetName'))]",
+        "[concat('Microsoft.Network/loadBalancers/', parameters('defaultPrefix'), parameters('azureLBName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfigLM",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('externalSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[concat(variables('lbID'), '/backendAddressPools/LoadmasterPool')]"
+                }
+              ],
+              "loadBalancerInboundNatRules": [
+                {
+                  "id": "[concat(variables('lbID'),'/inboundNatRules/SSH-LM', copyindex())]"
+                },
+                {
+                  "id": "[concat(variables('lbID'),'/inboundNatRules/WUI-LM', copyindex())]"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "name": "[concat(parameters('defaultPrefix'), parameters('azureLBName'))]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('defaultPrefix'), parameters('publicIPAddressName'))]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "LoadBalancerFrontEnd",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[variables('publicIPAddressID')]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "LoadmasterPool"
+          }
+        ],
+        "inboundNatRules": [
+          {
+              "name": "SSH-LM0",
+              "properties": {
+                "frontendIPConfiguration": {
+                  "id": "[variables('frontEndIPConfigID')]"
+                },
+                "protocol": "tcp",
+                "frontendPort": 50003,
+                "backendPort": 22,
+                "enableFloatingIP": false
+              }
+          },
+          {
+            "name": "SSH-LM1",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 50004,
+              "backendPort": 22,
+              "enableFloatingIP": false
+            }
+          },
+          {
+            "name": "WUI-LM0",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 40003,
+              "backendPort": 8443,
+              "enableFloatingIP": false
+            }
+          },
+          {
+            "name": "WUI-LM1",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 40004,
+              "backendPort": 8443,
+              "enableFloatingIP": false
+            }
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "LBRule",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbPoolID')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 5,
+              "probe": {
+                "id": "[variables('lbProbeID')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "tcpProbe",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 80,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(parameters('defaultPrefix'), parameters('windowsServerPrefix'), copyindex())]",
+      "copy": {
+        "name": "windowsVmLoop",
+        "count": "[variables('windowsInstances')]"
+      },
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('defaultPrefix'), parameters('storageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('defaultPrefix'), parameters('nicNamePrefix'), 'ms', copyindex())]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('windowsAvailabilitySetName'))]"
+      ],
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('windowsAvailabilitySetName'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('defaultVmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(parameters('windowsServerPrefix'), copyIndex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('windowsImagePublisher')]",
+            "offer": "[parameters('windowsImageOffer')]",
+            "sku": "[parameters('windowsImageSKU')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "windowsVmDisk",
+            "vhd": {
+              "uri": "[concat('http://', parameters('defaultPrefix'), parameters('storageAccountName'),'.blob.core.windows.net/vhds/', parameters('defaultPrefix'), 'windowsVmDisk', copyindex(), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('defaultPrefix'), parameters('nicNamePrefix'), 'ms', copyindex()))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+             "enabled": "true",
+             "storageUri": "[concat('http://', parameters('defaultPrefix'), parameters('storageAccountName'),'.blob.core.windows.net')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(parameters('defaultPrefix'), parameters('kempPrefix'), '0')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('defaultPrefix'), parameters('storageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('defaultPrefix'), parameters('nicNamePrefix'), 'lmExternal0')]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('defaultPrefix'), parameters('nicNamePrefix'), 'lmInternal0')]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('kempAvailabilitySetName'))]"
+      ],
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('kempAvailabilitySetName'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "Standard_DS2_v2"
+        },
+        "osProfile": {
+          "computerName": "[concat(parameters('defaultPrefix'), parameters('kempPrefix'), '0')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('kempImagePublisher')]",
+            "offer": "[parameters('kempImageOffer')]",
+            "sku": "[parameters('kempImageSKU')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "kempLmDisk",
+            "vhd": {
+              "uri": "[concat('http://', parameters('defaultPrefix'), parameters('storageAccountName'),'.blob.core.windows.net/vhds/', parameters('defaultPrefix'), 'kempLmDisk', '0', '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('defaultPrefix'), parameters('nicNamePrefix'), 'lmExternal0'))]",
+              "properties": {
+                  "primary": true
+              }
+            },
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('defaultPrefix'), parameters('nicNamePrefix'), 'lmInternal0'))]",
+              "properties": {
+                  "primary": false
+              }
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+             "enabled": "false"
+          }
+        }
+      },
+      "plan": {
+        "name": "[parameters('kempImageSKU')]",
+        "publisher": "[parameters('kempImagePublisher')]",
+        "product": "[parameters('kempImageOffer')]"
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(parameters('defaultPrefix'), parameters('kempPrefix'), '1')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('defaultPrefix'), parameters('storageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('defaultPrefix'), parameters('nicNamePrefix'), 'lmExternal1')]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('defaultPrefix'), parameters('nicNamePrefix'), 'lmInternal1')]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('kempAvailabilitySetName'))]"
+      ],
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('kempAvailabilitySetName'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "Standard_DS2_v2"
+        },
+        "osProfile": {
+          "computerName": "[concat(parameters('defaultPrefix'), parameters('kempPrefix'), '1')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('kempImagePublisher')]",
+            "offer": "[parameters('kempImageOffer')]",
+            "sku": "[parameters('kempImageSKU')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "kempLmDisk",
+            "vhd": {
+              "uri": "[concat('http://', parameters('defaultPrefix'), parameters('storageAccountName'),'.blob.core.windows.net/vhds/', parameters('defaultPrefix'), 'kempLmDisk', '1', '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('defaultPrefix'), parameters('nicNamePrefix'), 'lmExternal1'))]",
+              "properties": {
+                  "primary": true
+              }
+            },
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('defaultPrefix'), parameters('nicNamePrefix'), 'lmInternal1'))]",
+              "properties": {
+                  "primary": false
+              }
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+             "enabled": "false"
+          }
+        }
+      },
+      "plan": {
+        "name": "[parameters('kempImageSKU')]",
+        "publisher": "[parameters('kempImagePublisher')]",
+        "product": "[parameters('kempImageOffer')]"
+      }
+    }
+  ]
+}

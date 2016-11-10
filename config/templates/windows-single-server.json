@@ -1,0 +1,369 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    "defaultPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Default Naming Prefix"
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of storage account"
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Admin username"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin password"
+      }
+    },  
+    "dnsNameforAppIP": {
+      "type": "string",
+      "metadata": {
+        "description": "DNS for App Server IP"
+      }
+    },
+    "azureLBName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for Azure Load Balancer IP"
+      }
+    },
+    "dnsNameforAzureLBIP": {
+      "type": "string",
+      "metadata": {
+        "description": "DNS name Azure Load Balancer IP"
+      }
+    },
+    "publicIPAddressName": {
+      "type": "string",
+      "metadata": {
+        "description": "Public IP Name"
+      }
+    },
+    "nsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "Network Security Group Name"
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET name"
+      }
+    },
+    "vnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET address prefix name"
+      }
+    },
+    "externalSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET external subnet name"
+      }
+    },
+    "externalSubnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET external subnet prefix"
+      }
+    },
+    "internalSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET internal subnet name"
+      }
+    },
+    "internalSubnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "VNET internal subnet prefix"
+      }
+    },
+    "nicNamePrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Network Interface name prefix"
+      }
+    },
+    "defaultVmSize": {
+      "type": "string",
+      "metadata": {
+        "description": "Default size of the VMs"
+      }
+    },
+    "linuxServerPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix to use for Linux Server VM names"
+      }
+    },
+    "linuxAvailabilitySetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Linux Server VM Availability Set"
+      }
+    },
+    "linuxImagePublisher": {
+      "type": "string",
+      "metadata": {
+        "description": "Linux Image Publisher"
+      }
+    },
+    "linuxImageOffer": {
+      "type": "string",
+      "metadata": {
+        "description": "Linux Image Offer"
+      }
+    },
+    "linuxImageSKU": {
+      "type": "string",
+      "metadata": {
+        "description": "Linux Image SKU"
+      }
+    },
+    "linuxInstances": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of Linux Server Instances"
+      }
+    },
+    "windowsServerPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix to use for Windows Server VM names"
+      }
+    },
+    "windowsAvailabilitySetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Windows Server VM Availability Set"
+      }
+    },
+    "windowsImagePublisher": {
+      "type": "string",
+      "metadata": {
+        "description": "Windows Image Publisher"
+      }
+    },
+    "windowsImageOffer": {
+      "type": "string",
+      "metadata": {
+        "description": "Windows Image Offer"
+      }
+    },
+    "windowsImageSKU": {
+      "type": "string",
+      "metadata": {
+        "description": "Windows Image SKU"
+      }
+    },
+    "windowsInstances": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of Windows Server Instances"
+      }
+    },
+    "kempPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix to use for KEMP Server VM names"
+      }
+    },
+    "kempAvailabilitySetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the KEMP Server VM Availability Set"
+      }
+    },
+    "kempImagePublisher": {
+      "type": "string",
+      "metadata": {
+        "description": "KEMP Image Publisher"
+      }
+    },
+    "kempImageOffer": {
+      "type": "string",
+      "metadata": {
+        "description": "KEMP Image Offer"
+      }
+    },
+    "kempImageSKU": {
+      "type": "string",
+      "metadata": {
+        "description": "KEMP Image SKU"
+      }
+    }
+    },
+    "variables": {
+      "storageAccountType": "Standard_LRS"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "name": "[concat(parameters('defaultPrefix'), parameters('storageAccountName'))]",
+        "apiVersion": "2015-05-01-preview",
+        "location": "[resourceGroup().location]",
+        "properties": {
+          "accountType": "[variables('storageAccountType')]"
+        }
+      },
+      {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[concat(parameters('defaultPrefix'), parameters('nsgName'))]",
+            "apiVersion": "2016-03-30",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "Default-RDP",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3389",
+                            "sourceAddressPrefix": "0.0.0.0/0",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[concat(parameters('defaultPrefix'), parameters('publicIPAddressName'))]",
+            "apiVersion": "2016-03-30",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[concat(parameters('defaultPrefix'), parameters('vnetName'))]",
+            "apiVersion": "2016-03-30",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetAddressPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[concat(parameters('defaultPrefix'), parameters('externalSubnetName'))]",
+                        "properties": {
+                            "addressPrefix": "[parameters('externalSubnetPrefix')]"
+                        }
+                    }
+                ]
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(parameters('defaultPrefix'), parameters('nicNamePrefix'))]",
+            "apiVersion": "2016-03-30",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('defaultPrefix'), parameters('publicIPAddressName')))]"
+                            },
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('defaultPrefix'), parameters('vnetName')), '/subnets/', parameters('defaultPrefix'), parameters('externalSubnetName'))]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "domainNameLabel": "[concat(parameters('defaultPrefix'), parameters('dnsNameforAppIP'))]"
+                },
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('defaultPrefix'), parameters('nsgName')))]"
+                }
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('defaultPrefix'), parameters('publicIPAddressName')))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', concat(parameters('defaultPrefix'), parameters('vnetName')))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('defaultPrefix'), parameters('nsgName')))]"
+            ]
+        },
+      {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('defaultPrefix'), parameters('windowsServerPrefix'))]",
+            "apiVersion": "2015-06-15",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('defaultVmSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[parameters('windowsImagePublisher')]",
+                        "offer": "[parameters('windowsImageOffer')]",
+                        "sku": "[parameters('windowsImageSKU')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[concat(parameters('defaultPrefix'), parameters('windowsServerPrefix'))]",
+                        "createOption": "FromImage",
+                        "vhd": {
+                            "uri": "[concat('https', '://', parameters('defaultPrefix'), parameters('storageAccountName'), '.blob.core.windows.net', concat('/vhds/', parameters('defaultPrefix'), parameters('windowsServerPrefix'),'.vhd'))]"
+                        },
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[concat(parameters('defaultPrefix'), parameters('windowsServerPrefix'))]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": false
+                    },
+                    "secrets": [],
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('defaultPrefix'), parameters('nicNamePrefix')))]"
+                        }
+                    ]
+                }
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', concat(parameters('defaultPrefix'), parameters('storageAccountName')))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('defaultPrefix'), parameters('nicNamePrefix')))]"
+            ]
+        }
+    ]
+}
