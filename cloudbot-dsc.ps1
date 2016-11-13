@@ -1,7 +1,7 @@
 ﻿configuration cloudbot {
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration
-    Import-DscResource -Name MSFT_xRemoteFile -ModuleName xPSDesiredStateConfiguration
+    Import-DscResource -Name MSFT_xRemoteFile -ModuleName @{ModuleName="xPSDesiredStateConfiguration"; RequiredVersion="5.0.0.0"}
     Import-DscResource -ModuleName @{ModuleName="Hubot"; RequiredVersion="1.1.5"}
     Import-DscResource -ModuleName PowerShellModule
 
@@ -71,7 +71,7 @@
             Path = "$($env:Temp)\cloudbot-master.zip"
             Destination = "$($env:Temp)"
             Ensure = 'Present'
-            DependsOn = '[xRemoteFile]hubotRepo'
+            DependsOn = '[xRemoteFile]cloudbotRepo'
         }
 
 
@@ -93,7 +93,7 @@
         {
             BotPath = $Node.HubotBotPath
             Ensure = 'Present'
-            DependsOn = '[Archive]extractHubotRepo','[HubotPrerequisites]installPreqs'
+            DependsOn = '[Archive]extractHubotRepo'
         }
         
         # Install Hubot as a service using NSSM
@@ -103,14 +103,14 @@
             ServiceName = "Hubot_$($Node.HubotBotName)"
             BotAdapter = $Node.HubotAdapter
             Ensure = 'Present'
-            DependsOn = '[HubotInstall]installHubot','[HubotPrerequisites]installPreqs'
+            DependsOn = '[HubotInstall]installHubot'
         }
     }
 }
 
 $defaultPrefix = "botdev"
 $instanceName = $defaultPrefix + "NxServer"
-$dataFile = "clodbot-dsc-data.psd1"
+$dataFile = "cloudbot-dsc-data.psd1"
 $outputPath = $env:USERPROFILE + "\Desktop\$instanceName.mof"
 
 cloudbot -InstanceName $instanceName -ConfigurationData $dataFile -OutputPath $outputPath
