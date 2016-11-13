@@ -2,6 +2,8 @@
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here\$sut"
 
+. .\New-CloudBotAzureSession.ps1
+
 Describe "Run a new Azure Deployment using KEMP-Bot" {
  
     Mock Get-Content -Verifiable { return "{'tenantId': '1234', 'applicationId': '1234', 'thumbprint': '1234'}" } -ParameterFilter {$Path -like "*validserviceprincipal*"}

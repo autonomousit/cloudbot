@@ -1,4 +1,6 @@
-function Test-KEMPERGTemplate {
+. $PSScriptRoot\..\..\New-CloudBotAzureSession.ps1
+
+function Test-CloudBotTemplate {
     Param(
         [Parameter(Mandatory)]
         $ResourceGroup,
@@ -14,7 +16,7 @@ function Test-KEMPERGTemplate {
 
     if ($testResult -eq $true) {
 
-        $testResult = Test-TemplateDeployment -ResourceGroup $ResourceGroup -TemplateFile $TemplateFile -ParameterFile $ResourceGroupParams
+        $testResult = Test-CloudBotDeployment -ResourceGroup $ResourceGroup -TemplateFile $TemplateFile -ParameterFile $ResourceGroupParams
     
     }
 
@@ -58,7 +60,7 @@ function Test-TemplateParametersExist {
 
 }
 
-function Test-TemplateDeployment {
+function Test-CloudBotDeployment {
     Param(
         [Parameter(Mandatory)]
         $ResourceGroup,
@@ -72,8 +74,8 @@ function Test-TemplateDeployment {
     # run Test-AzureRmResourceGroupDeployment in non-interactive 
         
     $script = {
-        $serviceprincipal = Get-Content -Path $env:USERPROFILE\Documents\erg.json | ConvertFrom-Json
-        New-KEMPERGAzureSession -CertificateThumbprint $serviceprincipal.thumbprint -ApplicationId $serviceprincipal.applicationID -TenantId $serviceprincipal.tenantID | Out-Null
+        $serviceprincipal = Get-Content -Path "$PSScriptRoot\..\serviceprincipals\azure.json" | ConvertFrom-Json
+        New-CloudBotAzureSession -CertificateThumbprint $serviceprincipal.thumbprint -ApplicationId $serviceprincipal.applicationID -TenantId $serviceprincipal.tenantID | Out-Null
     
         $result = Test-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroup -TemplateFile $TemplateFile -TemplateParameterFile $ResourceGroupParams
     

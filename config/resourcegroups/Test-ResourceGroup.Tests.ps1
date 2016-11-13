@@ -18,7 +18,7 @@ Describe "Validating all Resource Groups against Default ARM Template" {
         
         It "Tests the Default Template against the $name Resource Group" {
 
-            $result = Test-CloudBotTemplate -ResourceGroup "ERG-Infra-Test" -TemplateFile $template -ResourceGroupParams $groupPath
+            $result = Test-CloudBotTemplate -ResourceGroup "Cloudbot-Test" -TemplateFile $template -ResourceGroupParams $groupPath
             
             $result | Should Be $true
 

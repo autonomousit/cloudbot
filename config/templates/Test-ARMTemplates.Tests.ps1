@@ -18,7 +18,7 @@ Describe "Validating all Templates against Default Resource Group" {
         
         It "Tests the $name Template against the Default Resource Group" {
 
-            $result = Test-KEMPERGTemplate -ResourceGroup "ERG-Infra-Test" -TemplateFile $armPath -ResourceGroupParams $resourcegroup
+            $result = Test-CloudBotTemplate -ResourceGroup "ERG-Infra-Test" -TemplateFile $armPath -ResourceGroupParams $resourcegroup
             
             $result | Should Be $true
 
