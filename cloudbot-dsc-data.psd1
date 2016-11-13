@@ -6,7 +6,7 @@
             SlackAPIKey = 'xoxb-00000-00000000000000'
             HubotBotName = 'cloudbot'
             HubotLogLevel = 'debug'
-            InstallPath = 'C:\cloudbot'
+            HubotBotPath = 'C:\cloudbot'
             HubotAuthRoles = 'admin=slackHandle'
         }
     )

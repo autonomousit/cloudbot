@@ -9,7 +9,6 @@ $defaultPrefix = "botdev"
 
 $instanceName = $defaultPrefix + "CloudBot"
 $storageAccount = $defaultPrefix + "storage"
-$dscMOFPath = $env:USERPROFILE + "\Desktop\$instanceName.mof"
 
 # Authenticate to Azure
 $credential = Get-Credential
@@ -22,34 +21,7 @@ $parameterFile = ".\scripts\config\resourcegroups\cloudbot-development-params.js
 
 New-AzureRmResourceGroupDeployment -Name $deploymentName -ResourceGroupName $resourceGroup -TemplateFile $templateFile -TemplateParameterFile $parameterFile
 
-# Upload DSC MOF file
-$containerName = "cloudbot-infra"
-$context = (Get-AzureRmStorageAccount -ResourceGroupName $resourceGroup -Name $storageaccount).Context
+# Publish DSC Configuration
+Publish-AzureRmVMDscConfiguration -ResourceGroupName $resourceGroup -ConfigurationPath ".\cloudbot-dsc.ps1" -ConfigurationDataPath ".\cloudbot-dsc-data.psd1" -StorageAccountName $storageAccount
 
-New-AzureStorageContainer -Name $containerName -Permission Off -Context $context
-
-Set-AzureStorageBlobContent -Container $containerName -File $dscMOFPath -Context $context
-
-# Configure Application Server
-$extensionName = 'DSCForLinux'
-$publisher = 'Microsoft.OSTCExtensions'
-$version = '2.0'
-
-$storageKey = (Get-AzureRmStorageAccountKey -ResourceGroupName $resourceGroup -Name $storageAccount)[0].Value
-
-$storageName = "'" + $storageAccount + "'"
-$key = "'" + $storageKey + "'"
-
-$privateConfig = "{
-  'StorageAccountName': $storageName,
-  'StorageAccountKey': $key
-}"
-
-$mofUri = "'https://" + $storageAccount + '.blob.core.windows.net/' + $containerName + '/' + $instanceName + ".mof'"
-
-$publicConfig = "{
-  'Mode': 'Push',
-  'FileUri': $mofUri
-}"
-
-Set-AzureRmVMExtension -ResourceGroupName $resourceGroup -VMName $instanceName -Location $location -Name $extensionName -Publisher $publisher -ExtensionType $extensionName -TypeHandlerVersion $version -SettingString $publicConfig -ProtectedSettingString $privateConfig
+Set-AzureRmVMDscExtension -ResourceGroupName $resourceGroup -VMName $instanceName -ArchiveBlobName "cloudbot-dsc.ps1.zip" -ArchiveStorageAccountName $storageAccount -ConfigurationName "cloudbot" -WmfVersion 5.0 -Version 2.17

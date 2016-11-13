@@ -69,11 +69,10 @@
         Archive extractCloudbotRepo
         {
             Path = "$($env:Temp)\cloudbot-master.zip"
-            Destination = "$($env:Temp)"
+            Destination = "$($env:Temp)\cloudbot"
             Ensure = 'Present'
             DependsOn = '[xRemoteFile]cloudbotRepo'
         }
-
 
         # Install Powershell Modules required by CloudBot Scripts
         PSModuleResource installAzureModule
@@ -93,7 +92,7 @@
         {
             BotPath = $Node.HubotBotPath
             Ensure = 'Present'
-            DependsOn = '[Archive]extractHubotRepo'
+            DependsOn = '[Archive]extractHubotRepo', '[HubotPrerequisites]installPreqs'
         }
         
         # Install Hubot as a service using NSSM
@@ -101,16 +100,10 @@
         {
             BotPath = $Node.HubotBotPath
             ServiceName = "Hubot_$($Node.HubotBotName)"
-            BotAdapter = $Node.HubotAdapter
+            BotAdapter = 'slack'
             Ensure = 'Present'
-            DependsOn = '[HubotInstall]installHubot'
+            DependsOn = '[HubotInstall]installHubot', '[HubotPrerequisites]installPreqs'
         }
+
     }
 }
-
-$defaultPrefix = "botdev"
-$instanceName = $defaultPrefix + "NxServer"
-$dataFile = "cloudbot-dsc-data.psd1"
-$outputPath = $env:USERPROFILE + "\Desktop"
-
-cloudbot -ConfigurationData $dataFile -OutputPath $outputPath
