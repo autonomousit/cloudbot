@@ -2,7 +2,7 @@
 #   Triggers a New Deployment in Azure via Powershell
 #
 # Commands:
-#   hubot deploy <deploymentname> - Deploys a pre-defined ARM Template in Azure
+#   hubot deploy <deploymentname> to <resourcegroup> - Deploys a pre-defined ARM Template in an Azure Resource Group
 
 # Require the edge module
 edge = require("edge")
@@ -14,7 +14,7 @@ executePowerShell = edge.func('ps', -> ###
 
   # Edge.js passes an object to PowerShell as a variable - $inputFromJS
   # This object is built in CoffeeScript on line 27 below
-  New-CloudBotAzureDeployment -Template $inputFromJS.template -ResourceGroup $inputFromJS.resourceGroup -ServicePrincipal $inputFromJS.principal
+  New-CloudBotAzureDeployment -Template $inputFromJS.template -ResourceGroup $inputFromJS.resourceGroup -ServicePrincipal azure
 
 ###
 )
@@ -22,17 +22,15 @@ executePowerShell = edge.func('ps', -> ###
 module.exports = (robot) ->
   # Capture the user message using a regex capture
   # to find the name of the service
-  robot.respond /deploy ([\w-]+) to ([\w-]+) for ([\w-]+)$/i, (msg) ->
+  robot.respond /deploy ([\w-]+) to ([\w-]+)/i, (msg) ->
     # Set the service name to a varaible
     template = msg.match[1]
     resourceGroup = msg.match[2]
-    principal = msg.match[3]
 
     # Build an object to send to PowerShell
     psObject = {
       template: template,
       resourceGroup: resourceGroup,
-      principal: principal
     }
 
     # Build the PowerShell callback
@@ -58,15 +56,15 @@ module.exports = (robot) ->
           if result.Message is "Succeeded"
             # Build a string to send back to the channel and
             # include the output (this comes from the JSON output)
-            msg.send ":beers: Deploying #{result.Template} to #{result.ResourceGroup} for #{psObject.principal} succeeded"
+            msg.send ":beers: Deploying #{result.Template} to #{result.ResourceGroup} succeeded"
           # If there is a failure, prepend a warning emoji to
           # the output from PowerShell.
           else
             # Build a string to send back to the channel and
             #include the output (this comes from the JSON output)
-            msg.send ":radioactive_sign: Deploying  #{result.DeploymentName} to #{result.ResourceGroup} for #{psObject.principal} failed. Provisioning State: #{result.Message}"
+            msg.send ":radioactive_sign: Deploying  #{result.DeploymentName} to #{result.ResourceGroup} failed. Provisioning State: #{result.Message}"
 
     # Acknowledge start of Deployment
-    msg.send ":construction: Starting to deploy #{result.Template} to #{result.ResourceGroup} for #{psObject.principal}. This might take a while, I'll get back to you when it's done..."
+    msg.send ":construction: Starting to deploy #{template} to #{resourceGroup}. This might take a while, I'll get back to you when it's done..."
     # Call PowerShell function
     callPowerShell psObject, msg
