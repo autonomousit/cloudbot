@@ -7,7 +7,7 @@ $resourceGroup = "CloudBot-Development"
 $location = "Southeast Asia"
 $defaultPrefix = "botdev"
 
-$instanceName = $defaultPrefix + "NxServer"
+$instanceName = $defaultPrefix + "CloudBot"
 $storageAccount = $defaultPrefix + "storage"
 $dscMOFPath = $env:USERPROFILE + "\Desktop\$instanceName.mof"
 

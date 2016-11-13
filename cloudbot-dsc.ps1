@@ -111,6 +111,6 @@
 $defaultPrefix = "botdev"
 $instanceName = $defaultPrefix + "NxServer"
 $dataFile = "cloudbot-dsc-data.psd1"
-$outputPath = $env:USERPROFILE + "\Desktop\$instanceName.mof"
+$outputPath = $env:USERPROFILE + "\Desktop"
 
-cloudbot -InstanceName $instanceName -ConfigurationData $dataFile -OutputPath $outputPath
+cloudbot -ConfigurationData $dataFile -OutputPath $outputPath
