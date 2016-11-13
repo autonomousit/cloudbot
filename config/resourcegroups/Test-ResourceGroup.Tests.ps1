@@ -6,7 +6,7 @@ Describe "Validating all Resource Groups against Default ARM Template" {
 
     $rootPath = $PSScriptRoot + '\'
     $resourceGroups = Get-ChildItem $rootPath -Filter '*params.json'
-    $template = "$PSScriptRoot\..\ARMTemplates\default.json"
+    $template = "$PSScriptRoot\..\templates\default.json"
 
     foreach ($group in $resourceGroups) {
 
