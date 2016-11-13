@@ -309,7 +309,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('defaultPrefix'), parameters('publicIPAddressName'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('defaultPrefix'), parameters('publicIPAddressName')))]"
               },
               "subnet": {
                 "id": "[variables('subnetRef')]"
@@ -318,7 +318,7 @@
           }
         ],
         "networkSecurityGroup": {
-           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('defaultPrefix'), parameters('nsgName'))]"
+           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('defaultPrefix'), parameters('nsgName')))]"
         }
       }
     },
