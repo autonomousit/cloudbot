@@ -18,7 +18,7 @@ Add-AzureRmAccount -Credential $credential -SubscriptionName $subscriptionName
 # Deploy Cloudbot Infrastructure
 $deploymentName = "CloudBot Deployment"
 $templateFile =  ".\scripts\config\templates\cloudbot-server.json"
-$parameterFile = ".\scripts\config\resourcgroups\cloudbot-development-params.json"
+$parameterFile = ".\scripts\config\resourcegroups\cloudbot-development-params.json"
 
 New-AzureRmResourceGroupDeployment -Name $deploymentName -ResourceGroupName $resourceGroup -TemplateFile $templateFile -TemplateParameterFile $parameterFile
 
