@@ -231,7 +231,7 @@
             "properties": {
                 "securityRules": [
                     {
-                        "name": "Sydney-KEMP-RDP",
+                        "name": "Default-RDP",
                         "properties": {
                             "protocol": "Tcp",
                             "sourcePortRange": "*",
@@ -323,7 +323,7 @@
         },
       {
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('defaultPrefix'), 'KempBot')]",
+            "name": "[concat(parameters('defaultPrefix'), 'CloudBot')]",
             "apiVersion": "2015-06-15",
             "location": "[resourceGroup().location]",
             "properties": {
@@ -338,17 +338,17 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[concat(parameters('defaultPrefix'), parameters('windowsServerPrefix'), 'KempBot')]",
+                        "name": "[concat(parameters('defaultPrefix'), parameters('windowsServerPrefix'), 'CloudBot')]",
                         "createOption": "FromImage",
                         "vhd": {
-                            "uri": "[concat('https', '://', parameters('defaultPrefix'), parameters('storageAccountName'), '.blob.core.windows.net', concat('/vhds/', parameters('defaultPrefix'), 'KempBot','.vhd'))]"
+                            "uri": "[concat('https', '://', parameters('defaultPrefix'), parameters('storageAccountName'), '.blob.core.windows.net', concat('/vhds/', parameters('defaultPrefix'), 'CloudBot','.vhd'))]"
                         },
                         "caching": "ReadWrite"
                     },
                     "dataDisks": []
                 },
                 "osProfile": {
-                    "computerName": "[concat(parameters('defaultPrefix'), 'KempBot')]",
+                    "computerName": "[concat(parameters('defaultPrefix'), 'CloudBot')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "windowsConfiguration": {
                         "provisionVMAgent": true,
