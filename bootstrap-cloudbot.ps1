@@ -16,7 +16,7 @@ $credential = Get-Credential
 Add-AzureRmAccount -Credential $credential -SubscriptionName $subscriptionName
 
 # Deploy Cloudbot Infrastructure
-$deploymentName = "CloudBot Deployment"
+$deploymentName = "CloudBot-Deployment"
 $templateFile =  ".\scripts\config\templates\cloudbot-server.json"
 $parameterFile = ".\scripts\config\resourcegroups\cloudbot-development-params.json"
 
