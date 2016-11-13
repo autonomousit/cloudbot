@@ -1,3 +1,5 @@
+. $PSScriptRoot\..\..\New-CloudBotAzureSession.ps1
+
 function Test-CloudBotTemplate {
     Param(
         [Parameter(Mandatory)]
