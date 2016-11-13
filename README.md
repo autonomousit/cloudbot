@@ -56,4 +56,23 @@ Execute the bootstrap script and provide your Azure credentials when prompted.
 .\bootstrap-cloudbot.ps1
 ```
 
-The deployment will take some time to complete (~15-30 minutes)
+The deployment will take some time to complete (~30 minutes)
+
+# Final Configuration
+There are a few steps not yet automated that require you to login via RDP to complete the installation.
+
+Once logged into the CloudBot seerver open a Powershell prompt with Administrative privileges.
+
+First set the local Execution Policy to "Unrestricted", the scripts & code for CloudBot currently aren't signed.
+
+```
+Set-ExecutionPolicy Unrestricted
+```
+
+Next run the "c:\windows\temp\cloudbot\cloudbot-master\final-configuration.ps1" script to install the CloudBot scripts & register a Servcie Principal in Azure for CloudBot to authenticate with.
+
+You'll need to provide your Azure credentials when prompted.
+
+```
+.\final-configuration.ps1
+```
