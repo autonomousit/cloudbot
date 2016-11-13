@@ -107,3 +107,10 @@
         }
     }
 }
+
+$defaultPrefix = "botdev"
+$instanceName = $defaultPrefix + "NxServer"
+$dataFile = "clodbot-dsc-data.psd1"
+$outputPath = $env:USERPROFILE + "\Desktop\$instanceName.mof"
+
+cloudbot -InstanceName $instanceName -ConfigurationData $dataFile -OutputPath $outputPath
