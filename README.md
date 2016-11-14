@@ -58,7 +58,6 @@ Execute the bootstrap script and provide your Azure credentials when prompted.
 
 The deployment will take some time to complete (~30 minutes)
 
-# Final Configuration
 There are a few steps not yet automated that require you to login via RDP to complete the installation.
 
 Once logged into the CloudBot seerver open a Powershell prompt with Administrative privileges.
@@ -76,3 +75,12 @@ You'll need to provide your Azure credentials when prompted.
 ```
 .\final-configuration.ps1
 ```
+
+# Planned Features
+* Complete automation of deployment
+* Stop/Start/List/Remove Resources 
+* Support for Azure DSC Extension & Azure Automation DSC
+* Support for multiple Service Principals
+* Role-based Access using Hubot Auth
+* Multi-Cloud Support
+* Extend Template Catalog to include Azure Bootstrap Repository
